@@ -4,26 +4,38 @@ output: github_document
 date: "2022-09-21"
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r, include = FALSE}
+library(tidyverse)
 ```
 
-## R Markdown
+## Problem 1: Exploratory Data Analysis
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+In this homework, we will be using the `penguins` dataset from `palmerpenguins` package. 
+```{r}
+data("penguins", package = "palmerpenguins")
+```
+We can use the `head` function to take a look at the first 5 rows of the data and to see what variables are present. Using `nrow` and `ncol`, we can take a look at how many observations and variables are in our dataset
+```{r}
+head(penguins, 5)
+nrow(penguins)
+ncol(penguins)
 ```
 
-## Including Plots
+We can see that the `penguins` dataset has 8 variables and 344 observations. For each penguin, it contains information about the species, sex, island, year they were recorded, as well as several size measurements, including bill length and depth, flipper length, and body mass.
 
-You can also embed plots, for example:
+The mean flipper length in the data is `r mean(penguins$flipper_length_mm, na.rm = TRUE)` millimeters.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+To do further data exploration, we want to graph the relationship between flipper length and bill length, by penguin species. We can do so with a scatterplot using `ggplot`.
+
+```{r plot, echo = FALSE, warning = FALSE}
+ggplot(data = penguins, aes(x = bill_length_mm, y = flipper_length_mm, color = species)) + 
+  geom_point() + 
+  labs(x = "Bill Length (mm)", y = "Flipper Length (mm)")
+
+ggsave("scatter_plot.pdf", height = 4, width = 6)
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Problem 2
+
+
