@@ -1,7 +1,7 @@
 ---
 title: "P8105 Homework 1"
 output: github_document
-date: "2022-09-21"
+date: "September 24th, 2022"
 ---
 
 ```{r, include = FALSE}
@@ -14,7 +14,7 @@ In this homework, we will be using the `penguins` dataset from `palmerpenguins` 
 ```{r}
 data("penguins", package = "palmerpenguins")
 ```
-We can use the `head` function to take a look at the first 5 rows of the data and to see what variables are present. Using `nrow` and `ncol`, we can take a look at how many observations and variables are in our dataset
+We can use the `head` function to take a look at the first 5 rows of the data and to see what variables are present. Using `nrow` and `ncol`, we can take a look at how many observations and variables are in our dataset.
 ```{r}
 head(penguins, 5)
 nrow(penguins)
@@ -36,6 +36,52 @@ ggsave("scatter_plot.pdf", height = 4, width = 6)
 
 ```
 
-## Problem 2
+## Problem 2: Working with dataframes
 
+We will now create a dataframe using `tibble` containing:
 
+* a random sample of size 10 from a standard Normal distribution
+* a logical vector indicating whether elements of the sample are greater than 0
+* a character vector of length 10
+* a factor vector of length 10, with 3 different factor “levels”
+
+```{r dataframe}
+p2_df = tibble(
+  v_numeric = rnorm(10),
+  v_logical = v_numeric > 0,
+  v_char = c("Apple", "Milk", "Kiwi", "Cucumber", "Soda", 
+             "Pepper", "Strawberry", "Mango", "Spinach", "Coffee"),
+  v_factor = factor(c("Fruit", "Beverage", "Fruit", "Vegetable", 
+                      "Beverage", "Vegetable", "Fruit", "Fruit", "Vegetable", "Beverage"))
+)
+
+head(p2_df)
+```
+Next, we will try to take the mean of each variable in our `p2_df` dataframe.
+
+```{r mean}
+mean(pull(p2_df, var = 1))
+mean(pull(p2_df, var = 2))
+mean(pull(p2_df, var = 3))
+mean(pull(p2_df, var = 4))
+```
+
+When we try to calculate the mean of each variable in `p2_df`, we get the mean values for `v_numeric` and `v_logical`, while getting an output of `NA` for the `v_char` and `v_factor`. Therefore, the mean function appears to only work for numeric or logical variables.
+
+Next, we will try to convert the logical, character, and factor variables into numeric variables using `as.numeric  `. 
+
+```{r, results = "hide", warning = FALSE}
+p2_df$v_logical = as.numeric(p2_df$v_logical)
+p2_df$v_char = as.numeric(p2_df$v_char)
+p2_df$v_factor = as.numeric(p2_df$v_factor)
+ 
+mean(pull(p2_df, var = 2))
+mean(pull(p2_df, var = 3))
+mean(pull(p2_df, var = 4))
+```
+
+After using `as.numeric`, we can see the `v_logical` replaces `TRUE` and `FALSE` with a string of 1's and 0's. We get a mean of `r mean(pull(p2_df, var = 2))`, which is the same as what we calculated as a logical variable, indicating that R takes the average number of successes observed in our dataset.
+
+Similarly `as.numeric` assigning a numeric value to each level of our factor variable, `v_factor`. Our mean is `r mean(pull(p2_df, var = 4))`. This allowed R to calculate a mean from these now numeric values. This, however, may not be meaningful, as we had a nominal factor variable.
+
+Finally, using `as.numeric` on the character variable did not assign numeric variables to the structure, and instead, coerced all values to `NA`. This indicates that character variables with no structure or order cannot be converted to numeric values. As such, we could not calculate the mean for `v_char`.
